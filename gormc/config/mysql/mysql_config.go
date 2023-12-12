@@ -4,6 +4,7 @@ import (
 	"errors"
 	"fmt"
 	"github.com/SpectatorNan/gorm-zero/gormc/config"
+	"github.com/SpectatorNan/gorm-zero/gormc/plugin"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
 	"gorm.io/gorm/logger"
@@ -52,12 +53,17 @@ func Connect(m Mysql) (*gorm.DB, error) {
 	})
 	if err != nil {
 		return nil, err
-	} else {
-		sqldb, _ := db.DB()
-		sqldb.SetMaxIdleConns(m.MaxIdleConns)
-		sqldb.SetMaxOpenConns(m.MaxOpenConns)
-		return db, nil
 	}
+	err = db.Use(plugin.OtelPlugin{})
+	if err != nil {
+		return nil, err
+	}
+
+	sqldb, _ := db.DB()
+	sqldb.SetMaxIdleConns(m.MaxIdleConns)
+	sqldb.SetMaxOpenConns(m.MaxOpenConns)
+	return db, nil
+
 }
 
 func ConnectWithConfig(m Mysql, cfg *gorm.Config) (*gorm.DB, error) {
@@ -70,10 +76,15 @@ func ConnectWithConfig(m Mysql, cfg *gorm.Config) (*gorm.DB, error) {
 	db, err := gorm.Open(mysql.New(mysqlCfg), cfg)
 	if err != nil {
 		return nil, err
-	} else {
-		sqldb, _ := db.DB()
-		sqldb.SetMaxIdleConns(m.MaxIdleConns)
-		sqldb.SetMaxOpenConns(m.MaxOpenConns)
-		return db, nil
 	}
+	err = db.Use(plugin.OtelPlugin{})
+	if err != nil {
+		return nil, err
+	}
+
+	sqldb, _ := db.DB()
+	sqldb.SetMaxIdleConns(m.MaxIdleConns)
+	sqldb.SetMaxOpenConns(m.MaxOpenConns)
+	return db, nil
+
 }
