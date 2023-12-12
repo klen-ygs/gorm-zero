@@ -23,42 +23,42 @@ func (o OtelPlugin) Name() string {
 }
 
 func (o OtelPlugin) Initialize(db *gorm.DB) (err error) {
-	err = db.Callback().Create().Before("gorm-otel:create").Register("before_create", o.Before(gormCreate))
+	err = db.Callback().Create().Before("*").Register("otel_before_create", o.Before(gormCreate))
 	if err != nil {
 		return err
 	}
 
-	err = db.Callback().Create().After("gorm-otel:create").Register("after_create", o.After)
+	err = db.Callback().Create().After("*").Register("otel_after_create", o.After)
 	if err != nil {
 		return err
 	}
 
-	err = db.Callback().Update().Before("gorm-otel:update").Register("before_update", o.Before(gormUpdate))
+	err = db.Callback().Update().Before("*").Register("otel_before_update", o.Before(gormUpdate))
 	if err != nil {
 		return err
 	}
 
-	err = db.Callback().Update().After("gorm-otel:update").Register("after_update", o.After)
+	err = db.Callback().Update().After("*").Register("otel_after_update", o.After)
 	if err != nil {
 		return err
 	}
 
-	err = db.Callback().Query().Before("gorm-otel:query").Register("before_query", o.Before(gormQuery))
+	err = db.Callback().Query().Before("*").Register("otel_before_query", o.Before(gormQuery))
 	if err != nil {
 		return err
 	}
 
-	err = db.Callback().Query().After("gorm-otel:query").Register("after_query", o.After)
+	err = db.Callback().Query().After("*").Register("otel_after_query", o.After)
 	if err != nil {
 		return err
 	}
 
-	err = db.Callback().Delete().Before("gorm-otel:delete").Register("before_delete", o.Before(gormDelete))
+	err = db.Callback().Delete().Before("*").Register("otel_before_delete", o.Before(gormDelete))
 	if err != nil {
 		return err
 	}
 
-	err = db.Callback().Delete().After("gorm-otel:delete").Register("after_delete", o.After)
+	err = db.Callback().Delete().After("*").Register("otel_after_delete", o.After)
 	if err != nil {
 		return err
 	}
@@ -70,7 +70,8 @@ func (o OtelPlugin) Before(spanName string) func(db *gorm.DB) {
 	return func(db *gorm.DB) {
 		ctx := db.Statement.Context
 		tracer := trace.TracerFromContext(ctx)
-		_, span := tracer.Start(ctx, spanName, oteltrace.WithSpanKind(oteltrace.SpanKindClient))
+		ctx, span := tracer.Start(ctx, spanName, oteltrace.WithSpanKind(oteltrace.SpanKindClient))
+		db.Statement.Context = ctx
 		db.InstanceSet(gormSpanKey, span)
 	}
 }
