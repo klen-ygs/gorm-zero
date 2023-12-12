@@ -1,16 +1,27 @@
 package config
 
 import (
-	"gorm.io/gorm/logger"
 	"log"
 	"os"
 	"time"
+
+	logx "github.com/SpectatorNan/gorm-zero/gormc/log"
+
+	"gorm.io/gorm/logger"
 )
 
 type GormLogConfigI interface {
 	GetGormLogMode() logger.LogLevel
 	GetSlowThreshold() time.Duration
 	GetColorful() bool
+}
+
+func NewLogxGormLogger(cfg GormLogConfigI) logger.Interface {
+	return &logx.GormLog{
+		Level:                     cfg.GetGormLogMode(),
+		IgnoreRecordNotFoundError: true,
+		SlowThreshold:             cfg.GetSlowThreshold(),
+	}
 }
 
 func NewDefaultGormLogger(cfg GormLogConfigI) logger.Interface {

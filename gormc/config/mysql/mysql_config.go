@@ -46,7 +46,7 @@ func Connect(m Mysql) (*gorm.DB, error) {
 	mysqlCfg := mysql.Config{
 		DSN: m.Dsn(),
 	}
-	newLogger := config.NewDefaultGormLogger(&m)
+	newLogger := config.NewLogxGormLogger(&m)
 	db, err := gorm.Open(mysql.New(mysqlCfg), &gorm.Config{
 		Logger: newLogger,
 	})

@@ -43,7 +43,7 @@ func Connect(m PgSql) (*gorm.DB, error) {
 	if m.Dbname == "" {
 		return nil, errors.New("database name is empty")
 	}
-	newLogger := config.NewDefaultGormLogger(&m)
+	newLogger := config.NewLogxGormLogger(&m)
 	pgsqlCfg := postgres.Config{
 		DSN:                  m.Dsn(),
 		PreferSimpleProtocol: true, // disables implicit prepared statement usage
