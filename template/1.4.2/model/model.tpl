@@ -40,6 +40,8 @@ func (c custom{{.upperStartCamelObject}}Model) WithSession(tx *gorm.DB) {{.upper
 }
 {{ else }}
 func (c custom{{.upperStartCamelObject}}Model) WithSession(tx *gorm.DB) {{.upperStartCamelObject}}Model {
+    newModel := *c.default{{.upperStartCamelObject}}Model
+    c.default{{.upperStartCamelObject}}Model = &newModel
 	c.conn = tx
 	return c
 }
