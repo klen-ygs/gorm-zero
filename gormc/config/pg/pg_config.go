@@ -4,11 +4,14 @@ import (
 	"errors"
 	"fmt"
 	"github.com/SpectatorNan/gorm-zero/gormc/config"
+	"time"
+
 	"github.com/SpectatorNan/gorm-zero/gormc/plugin"
+
+	"github.com/zeromicro/go-zero/core/logx"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 	"gorm.io/gorm/logger"
-	"time"
 )
 
 type PgSql struct {
@@ -67,6 +70,28 @@ func Connect(m PgSql) (*gorm.DB, error) {
 
 }
 
+func MustConnect(m PgSql) *gorm.DB {
+	if m.Dbname == "" {
+		logx.Must(errors.New("database name is empty"))
+	}
+	newLogger := config.NewLogxGormLogger(&m)
+	pgsqlCfg := postgres.Config{
+		DSN:                  m.Dsn(),
+		PreferSimpleProtocol: true, // disables implicit prepared statement usage
+	}
+	db, err := gorm.Open(postgres.New(pgsqlCfg), &gorm.Config{
+		Logger: newLogger,
+	})
+	if err != nil {
+		logx.Must(err)
+	}
+	sqldb, _ := db.DB()
+	sqldb.SetMaxIdleConns(m.MaxIdleConns)
+	sqldb.SetMaxOpenConns(m.MaxOpenConns)
+	return db
+
+}
+
 func ConnectWithConfig(m PgSql, cfg *gorm.Config) (*gorm.DB, error) {
 	if m.Dbname == "" {
 		return nil, errors.New("database name is empty")
@@ -90,4 +115,23 @@ func ConnectWithConfig(m PgSql, cfg *gorm.Config) (*gorm.DB, error) {
 	sqldb.SetMaxOpenConns(m.MaxOpenConns)
 	return db, nil
 
+}
+
+func MustConnectWithConfig(m PgSql, cfg *gorm.Config) *gorm.DB {
+	if m.Dbname == "" {
+		logx.Must(errors.New("database name is empty"))
+	}
+	pgsqlCfg := postgres.Config{
+		DSN:                  m.Dsn(),
+		PreferSimpleProtocol: true, // disables implicit prepared statement usage
+	}
+	db, err := gorm.Open(postgres.New(pgsqlCfg), cfg)
+	if err != nil {
+		logx.Must(err)
+	}
+	sqldb, _ := db.DB()
+	sqldb.SetMaxIdleConns(m.MaxIdleConns)
+	sqldb.SetMaxOpenConns(m.MaxOpenConns)
+
+	return db
 }

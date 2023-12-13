@@ -3,12 +3,15 @@ package mysql
 import (
 	"errors"
 	"fmt"
+	"time"
+
 	"github.com/SpectatorNan/gorm-zero/gormc/config"
 	"github.com/SpectatorNan/gorm-zero/gormc/plugin"
+
+	"github.com/zeromicro/go-zero/core/logx"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
 	"gorm.io/gorm/logger"
-	"time"
 )
 
 type Mysql struct {
@@ -66,6 +69,28 @@ func Connect(m Mysql) (*gorm.DB, error) {
 
 }
 
+func MustConnect(m Mysql) *gorm.DB {
+	if m.Dbname == "" {
+		logx.Must(errors.New("database name is empty"))
+	}
+	mysqlCfg := mysql.Config{
+		DSN: m.Dsn(),
+	}
+	newLogger := config.NewLogxGormLogger(&m)
+	db, err := gorm.Open(mysql.New(mysqlCfg), &gorm.Config{
+		Logger: newLogger,
+	})
+	if err != nil {
+		logx.Must(err)
+	}
+
+	sqldb, _ := db.DB()
+	sqldb.SetMaxIdleConns(m.MaxIdleConns)
+	sqldb.SetMaxOpenConns(m.MaxOpenConns)
+
+	return db
+}
+
 func ConnectWithConfig(m Mysql, cfg *gorm.Config) (*gorm.DB, error) {
 	if m.Dbname == "" {
 		return nil, errors.New("database name is empty")
@@ -87,4 +112,23 @@ func ConnectWithConfig(m Mysql, cfg *gorm.Config) (*gorm.DB, error) {
 	sqldb.SetMaxOpenConns(m.MaxOpenConns)
 	return db, nil
 
+}
+
+func MustConnectWithConfig(m Mysql, cfg *gorm.Config) *gorm.DB {
+	if m.Dbname == "" {
+		logx.Must(errors.New("database name is empty"))
+	}
+	mysqlCfg := mysql.Config{
+		DSN: m.Dsn(),
+	}
+	db, err := gorm.Open(mysql.New(mysqlCfg), cfg)
+	if err != nil {
+		logx.Must(err)
+	}
+
+	sqldb, _ := db.DB()
+	sqldb.SetMaxIdleConns(m.MaxIdleConns)
+	sqldb.SetMaxOpenConns(m.MaxOpenConns)
+
+	return db
 }
