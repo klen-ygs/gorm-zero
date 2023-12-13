@@ -1,1 +1,1 @@
-Delete(ctx context.Context, tx *gorm.DB, {{.lowerStartCamelPrimaryKey}} {{.dataType}}) error
+Delete(ctx context.Context, {{.lowerStartCamelPrimaryKey}} {{.dataType}}) error

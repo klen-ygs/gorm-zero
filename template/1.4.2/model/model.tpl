@@ -32,12 +32,14 @@ type (
 )
 
 {{ if .withCache }}
-func (c custom{{.upperStartCamelObject}}Model) WithSession(tx *gorm.DB) CauseOfDeathsModel {
+func (c custom{{.upperStartCamelObject}}Model) WithSession(tx *gorm.DB) {{.upperStartCamelObject}}Model {
+    newModel := *c.default{{.upperStartCamelObject}}Model
+    c.default{{.upperStartCamelObject}}Model = &newModel
 	c.CachedConn = c.CachedConn.WithSession(tx)
 	return c
 }
 {{ else }}
-func (c custom{{.upperStartCamelObject}}Model) WithSession(tx *gorm.DB) CauseOfDeathsModel {
+func (c custom{{.upperStartCamelObject}}Model) WithSession(tx *gorm.DB) {{.upperStartCamelObject}}Model {
 	c.conn = tx
 	return c
 }

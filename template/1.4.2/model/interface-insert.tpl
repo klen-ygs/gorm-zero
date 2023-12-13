@@ -1,1 +1,1 @@
-Insert(ctx context.Context, tx *gorm.DB, data *{{.upperStartCamelObject}}) error
+Insert(ctx context.Context, data *{{.upperStartCamelObject}}) error
