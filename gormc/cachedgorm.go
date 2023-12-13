@@ -2,7 +2,6 @@ package gormc
 
 import (
 	"context"
-	"database/sql"
 	"time"
 
 	"github.com/zeromicro/go-zero/core/mathx"
@@ -187,12 +186,8 @@ func (cc CachedConn) SetCacheWithExpireCtx(ctx context.Context, key string, val 
 	return cc.cache.SetWithExpireCtx(ctx, key, val, expire)
 }
 
-// Transact runs given fn in transaction mode.
-func (cc CachedConn) Transact(fn func(db *gorm.DB) error, opts ...*sql.TxOptions) error {
-	return cc.TransactCtx(context.Background(), fn, opts...)
-}
-
-// TransactCtx runs given fn in transaction mode.
-func (cc CachedConn) TransactCtx(ctx context.Context, fn func(db *gorm.DB) error, opts ...*sql.TxOptions) error {
-	return cc.db.WithContext(ctx).Transaction(fn, opts...)
+// WithSession replace the db to new *gorm.DB instance
+func (cc CachedConn) WithSession(tx *gorm.DB) CachedConn {
+	cc.db = tx
+	return cc
 }

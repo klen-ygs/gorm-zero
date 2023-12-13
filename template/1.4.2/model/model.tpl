@@ -21,14 +21,28 @@ type (
 		custom{{.upperStartCamelObject}}LogicModel
 	}
 
+    custom{{.upperStartCamelObject}}LogicModel interface {
+        WithSession(tx *gorm.DB) {{.upperStartCamelObject}}Model
+    }
+
 	custom{{.upperStartCamelObject}}Model struct {
 		*default{{.upperStartCamelObject}}Model
 	}
 
-	custom{{.upperStartCamelObject}}LogicModel interface {
-
-    	}
 )
+
+{{ if .withCache }}
+func (c custom{{.upperStartCamelObject}}Model) WithSession(tx *gorm.DB) CauseOfDeathsModel {
+	c.CachedConn = c.CachedConn.WithSession(tx)
+	return c
+}
+{{ else }}
+func (c custom{{.upperStartCamelObject}}Model) WithSession(tx *gorm.DB) CauseOfDeathsModel {
+	c.conn = tx
+	return c
+}
+{{ end }}
+
 {{ if or (.gormCreatedAt) (.gormUpdatedAt) }}
 // BeforeCreate hook create time
 func (s *{{.upperStartCamelObject}}) BeforeCreate(tx *gorm.DB) error {
