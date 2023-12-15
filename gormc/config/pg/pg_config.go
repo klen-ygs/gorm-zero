@@ -14,7 +14,7 @@ import (
 	"gorm.io/gorm/logger"
 )
 
-type PgSql struct {
+type Conf struct {
 	Username      string
 	Password      string
 	Path          string
@@ -29,21 +29,21 @@ type PgSql struct {
 	SlowThreshold int64  `json:",default=1000"`
 }
 
-func (m *PgSql) Dsn() string {
+func (m *Conf) Dsn() string {
 	return fmt.Sprintf("user=%s password=%s dbname=%s host=%s port=%d sslmode=%s TimeZone=%s", m.Username, m.Password, m.Dbname, m.Path, m.Port, m.SslMode, m.TimeZone)
 }
-func (m *PgSql) GetGormLogMode() logger.LogLevel {
+func (m *Conf) GetGormLogMode() logger.LogLevel {
 	return config.OverwriteGormLogMode(m.LogMode)
 }
 
-func (m *PgSql) GetSlowThreshold() time.Duration {
+func (m *Conf) GetSlowThreshold() time.Duration {
 	return time.Duration(m.SlowThreshold) * time.Millisecond
 }
-func (m *PgSql) GetColorful() bool {
+func (m *Conf) GetColorful() bool {
 	return true
 }
 
-func Connect(m PgSql) (*gorm.DB, error) {
+func Connect(m Conf) (*gorm.DB, error) {
 	if m.Dbname == "" {
 		return nil, errors.New("database name is empty")
 	}
@@ -70,7 +70,7 @@ func Connect(m PgSql) (*gorm.DB, error) {
 
 }
 
-func MustConnect(m PgSql) *gorm.DB {
+func MustConnect(m Conf) *gorm.DB {
 	if m.Dbname == "" {
 		logx.Must(errors.New("database name is empty"))
 	}
@@ -92,7 +92,7 @@ func MustConnect(m PgSql) *gorm.DB {
 
 }
 
-func ConnectWithConfig(m PgSql, cfg *gorm.Config) (*gorm.DB, error) {
+func ConnectWithConfig(m Conf, cfg *gorm.Config) (*gorm.DB, error) {
 	if m.Dbname == "" {
 		return nil, errors.New("database name is empty")
 	}
@@ -117,7 +117,7 @@ func ConnectWithConfig(m PgSql, cfg *gorm.Config) (*gorm.DB, error) {
 
 }
 
-func MustConnectWithConfig(m PgSql, cfg *gorm.Config) *gorm.DB {
+func MustConnectWithConfig(m Conf, cfg *gorm.Config) *gorm.DB {
 	if m.Dbname == "" {
 		logx.Must(errors.New("database name is empty"))
 	}

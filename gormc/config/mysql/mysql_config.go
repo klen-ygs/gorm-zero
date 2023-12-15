@@ -14,7 +14,7 @@ import (
 	"gorm.io/gorm/logger"
 )
 
-type Mysql struct {
+type Conf struct {
 	Path          string // 服务器地址
 	Port          int    `json:",default=3306"`                                               // 端口
 	Config        string `json:",default=charset%3Dutf8mb4%26parseTime%3Dtrue%26loc%3DLocal"` // 高级配置
@@ -28,22 +28,22 @@ type Mysql struct {
 	SlowThreshold int64  `json:",default=1000"`
 }
 
-func (m *Mysql) Dsn() string {
+func (m *Conf) Dsn() string {
 	return m.Username + ":" + m.Password + "@tcp(" + m.Path + ":" + fmt.Sprintf("%d", m.Port) + ")/" + m.Dbname + "?" + m.Config
 }
 
-func (m *Mysql) GetGormLogMode() logger.LogLevel {
+func (m *Conf) GetGormLogMode() logger.LogLevel {
 	return config.OverwriteGormLogMode(m.LogMode)
 }
 
-func (m *Mysql) GetSlowThreshold() time.Duration {
+func (m *Conf) GetSlowThreshold() time.Duration {
 	return time.Duration(m.SlowThreshold) * time.Millisecond
 }
-func (m *Mysql) GetColorful() bool {
+func (m *Conf) GetColorful() bool {
 	return true
 }
 
-func Connect(m Mysql) (*gorm.DB, error) {
+func Connect(m Conf) (*gorm.DB, error) {
 	if m.Dbname == "" {
 		return nil, errors.New("database name is empty")
 	}
@@ -69,7 +69,7 @@ func Connect(m Mysql) (*gorm.DB, error) {
 
 }
 
-func MustConnect(m Mysql) *gorm.DB {
+func MustConnect(m Conf) *gorm.DB {
 	if m.Dbname == "" {
 		logx.Must(errors.New("database name is empty"))
 	}
@@ -91,7 +91,7 @@ func MustConnect(m Mysql) *gorm.DB {
 	return db
 }
 
-func ConnectWithConfig(m Mysql, cfg *gorm.Config) (*gorm.DB, error) {
+func ConnectWithConfig(m Conf, cfg *gorm.Config) (*gorm.DB, error) {
 	if m.Dbname == "" {
 		return nil, errors.New("database name is empty")
 	}
@@ -114,7 +114,7 @@ func ConnectWithConfig(m Mysql, cfg *gorm.Config) (*gorm.DB, error) {
 
 }
 
-func MustConnectWithConfig(m Mysql, cfg *gorm.Config) *gorm.DB {
+func MustConnectWithConfig(m Conf, cfg *gorm.Config) *gorm.DB {
 	if m.Dbname == "" {
 		logx.Must(errors.New("database name is empty"))
 	}
