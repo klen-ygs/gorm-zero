@@ -1,4 +1,4 @@
-package log
+package gormc
 
 import (
 	"context"

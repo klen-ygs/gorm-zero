@@ -5,8 +5,8 @@ import (
 	"fmt"
 	"time"
 
+	"github.com/klen/gorm-zero/gormc"
 	"github.com/klen/gorm-zero/gormc/config"
-	"github.com/klen/gorm-zero/gormc/plugin"
 
 	"github.com/zeromicro/go-zero/core/logx"
 	"gorm.io/driver/postgres"
@@ -57,7 +57,7 @@ func Connect(m Conf) (*gorm.DB, error) {
 	if err != nil {
 		return nil, err
 	}
-	err = db.Use(plugin.OtelPlugin{})
+	err = db.Use(gormc.OtelPlugin{})
 	if err != nil {
 		return nil, err
 	}
@@ -104,7 +104,7 @@ func ConnectWithConfig(m Conf, cfg *gorm.Config) (*gorm.DB, error) {
 		return nil, err
 	}
 
-	err = db.Use(plugin.OtelPlugin{})
+	err = db.Use(gormc.OtelPlugin{})
 	if err != nil {
 		return nil, err
 	}

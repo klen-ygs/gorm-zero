@@ -5,7 +5,7 @@ import (
 	"os"
 	"time"
 
-	logx "github.com/klen/gorm-zero/gormc/log"
+	logx "github.com/klen/gorm-zero/gormc"
 
 	"gorm.io/gorm/logger"
 )

@@ -1,4 +1,4 @@
-package plugin
+package gormc
 
 import (
 	"github.com/zeromicro/go-zero/core/trace"
