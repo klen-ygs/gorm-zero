@@ -1,4 +1,4 @@
-module github.com/klen/gorm-zero
+module github.com/klen-ygs/gorm-zero
 
 go 1.18
 

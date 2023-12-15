@@ -17,7 +17,7 @@
 ### add the dependent
 
 ```shell
-go get github.com/klen/gorm-zero
+go get github.com/klen-ygs/gorm-zero
 ```
 ### generate code
 
@@ -46,7 +46,7 @@ go get github.com/klen/gorm-zero
 ### Config
 ```go
 import (
-    "github.com/klen/gorm-zero/gormc/config/mysql"
+    "github.com/klen-ygs/gorm-zero/gormc/config/mysql"
 )
 type Config struct {
     Mysql mysql.Conf
@@ -57,7 +57,7 @@ type Config struct {
 
 ```go
 import (
-"github.com/klen/gorm-zero/gormc/config/mysql"
+"github.com/klen-ygs/gorm-zero/gormc/config/mysql"
 )
 func NewServiceContext(c config.Config) *ServiceContext {
     db, err := mysql.Connect(c.Mysql)
@@ -72,7 +72,7 @@ or
 
 ```go
 import (
-"github.com/klen/gorm-zero/gormc/config/mysql"
+"github.com/klen-ygs/gorm-zero/gormc/config/mysql"
 )
 func NewServiceContext(c config.Config) *ServiceContext {
     db := mysql.MustConnect(c.Mysql)
@@ -87,7 +87,7 @@ func NewServiceContext(c config.Config) *ServiceContext {
 ### Config
 ```go
 import (
-"github.com/klen/gorm-zero/gormc/config/pg"
+"github.com/klen-ygs/gorm-zero/gormc/config/pg"
 )
 type Config struct {
     PgSql pg.Conf
@@ -98,7 +98,7 @@ type Config struct {
 
 ```go
 import (
-"github.com/klen/gorm-zero/gormc/config/pg"
+"github.com/klen-ygs/gorm-zero/gormc/config/pg"
 )
 func NewServiceContext(c config.Config) *ServiceContext {
     db, err := pg.Connect(c.PgSql)
@@ -113,7 +113,7 @@ or
 
 ```go
 import (
-"github.com/klen/gorm-zero/gormc/config/pg"
+"github.com/klen-ygs/gorm-zero/gormc/config/pg"
 )
 func NewServiceContext(c config.Config) *ServiceContext {
     db := pg.MustConnect(c.PgSql)
