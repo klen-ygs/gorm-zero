@@ -1,74 +1,151 @@
 # gorm-zero
- go zero gorm extension
+## go zero gorm extension
 
 ### If you use go zero, and you want to use Gorm. You can use this library.
+
+## Feature
+
+- Integrate go-zero
+- generate code by goctl
+- use logx default
+- support opentelemetry
+
 
 
 # Usage
 
-- add the dependent
+### add the dependent
+
 ```shell
-go get github.com/SpectatorNan/gorm-zero
+go get github.com/klen/gorm-zero
 ```
-- replace  template/model in your project with gorm-zero/template/{goctl version}/model
-- generate
-```shell
-goctl model mysql -src={patterns} -dir={dir} -cache --home ./template
-```
+### generate code
+
+1. download model template to local
+
+   - replace  template/model in your project with gorm-zero/model
+
+   - generate
+
+     ```shell
+     goctl model mysql -src={patterns} -dir={dir} -cache --home ./template
+     ```
+
+2. generate by remote template
+
+   set remote = https://github.com/klen-ygs/gorm-zero.git
+
+   ```shell
+   goctl model mysql -src={patterns} -dir={dir} -cache --remote https://github.com/klen-ygs/gorm-zero.git
+   ```
+
+   
 
 ## Mysql
+
 ### Config
 ```go
 import (
-    "github.com/SpectatorNan/gorm-zero/gormc/config/mysql"
+    "github.com/klen/gorm-zero/gormc/config/mysql"
 )
 type Config struct {
-    Mysql mysql.Mysql
-    ...
+    Mysql mysql.Conf
+    // ...
 }
 ```
-## Initialization
+### Initialization
+
 ```go
 import (
-"github.com/SpectatorNan/gorm-zero/gormc/config/mysql"
+"github.com/klen/gorm-zero/gormc/config/mysql"
 )
 func NewServiceContext(c config.Config) *ServiceContext {
     db, err := mysql.Connect(c.Mysql)
     if err != nil {
         log.Fatal(err)
     }
-    ...
+    // ...
 }
 ```
 
+or
+
+```go
+import (
+"github.com/klen/gorm-zero/gormc/config/mysql"
+)
+func NewServiceContext(c config.Config) *ServiceContext {
+    db := mysql.MustConnect(c.Mysql)
+    // ...
+}
+```
+
+
+
 ## PgSql
+
 ### Config
 ```go
 import (
-"github.com/SpectatorNan/gorm-zero/gormc/config/pg"
+"github.com/klen/gorm-zero/gormc/config/pg"
 )
 type Config struct {
-    PgSql pg.PgSql
-    ...
+    PgSql pg.Conf
+    // ...
 }
 ```
-## Initialization
+### Initialization
+
 ```go
 import (
-"github.com/SpectatorNan/gorm-zero/gormc/config/pg"
+"github.com/klen/gorm-zero/gormc/config/pg"
 )
 func NewServiceContext(c config.Config) *ServiceContext {
     db, err := pg.Connect(c.PgSql)
     if err != nil {
         log.Fatal(err)
     }
-    ...
+    // ...
 }
 ```
 
-## Useage
+or
+
+```go
+import (
+"github.com/klen/gorm-zero/gormc/config/pg"
+)
+func NewServiceContext(c config.Config) *ServiceContext {
+    db := pg.MustConnect(c.PgSql)
+    // ...
+}
+```
+
+# Coding
+
+### Transition
+
+```go
+// use gormc.Transition, DB is *grom.DB
+err = gormc.Transition(l.ctx, l.svcCtx.DB, func(tx *gorm.DB) (err error) {
+
+    // use .WithSession 
+    err = l.svcCtx.DepartmentsModel.WithSession(tx).
+        Update(l.ctx, &model.Departments{
+            DepartmentsName: "xxx",
+        })
+
+    return
+})
+if err != nil {
+    return nil, err
+}
+```
+
+
 
 ### Query With Cache And Custom Expire Duration
+
 ```go
     gormzeroUsersIdKey := fmt.Sprintf("%s%v", cacheGormzeroUsersIdExpirePrefix, id)
     var resp Users
@@ -102,6 +179,3 @@ func NewServiceContext(c config.Config) *ServiceContext {
     }
 ```
 
-
-## Usage Example
-- go zero model example link: [gorm-zero-example](https://github.com/SpectatorNan/gorm-zero-example)
