@@ -5,8 +5,8 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/SpectatorNan/gorm-zero/gormc/config"
-	"github.com/SpectatorNan/gorm-zero/gormc/plugin"
+	"github.com/klen/gorm-zero/gormc/config"
+	"github.com/klen/gorm-zero/gormc/plugin"
 
 	"github.com/zeromicro/go-zero/core/logx"
 	"gorm.io/driver/mysql"
@@ -16,8 +16,8 @@ import (
 
 type Conf struct {
 	Path          string // 服务器地址
-	Port          int    `json:",default=3306"`                                               // 端口
-	Config        string `json:",default=charset%3Dutf8mb4%26parseTime%3Dtrue%26loc%3DLocal"` // 高级配置
+	Port          int    `json:",default=3306"` // 端口
+	Config        string `json:",default=\"\""` // default: charset=utf8mb4&parseTime=True&loc=Local 高级配置
 	Dbname        string // 数据库名
 	Username      string // 数据库用户名
 	Password      string // 数据库密码
@@ -40,6 +40,13 @@ func (m *Conf) GetSlowThreshold() time.Duration {
 }
 func (m *Conf) GetColorful() bool {
 	return true
+}
+
+func (m *Conf) GetConnConfig() string {
+	if m.Config == "" {
+		return "charset=utf8mb4&parseTime=True&loc=Local"
+	}
+	return m.Config
 }
 
 func Connect(m Conf) (*gorm.DB, error) {

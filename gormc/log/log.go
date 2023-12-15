@@ -3,10 +3,11 @@ package log
 import (
 	"context"
 	"errors"
+	"time"
+
 	"github.com/zeromicro/go-zero/core/logx"
 	"gorm.io/gorm"
 	"gorm.io/gorm/logger"
-	"time"
 )
 
 type GormLog struct {

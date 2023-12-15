@@ -1,0 +1,7 @@
+
+Mysql:
+  Path: localhost
+  Post: 3306
+  Username: "root"
+  Password: "1234"
+  Dbname: dbtest

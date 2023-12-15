@@ -3,10 +3,10 @@ package pg
 import (
 	"errors"
 	"fmt"
-	"github.com/SpectatorNan/gorm-zero/gormc/config"
 	"time"
 
-	"github.com/SpectatorNan/gorm-zero/gormc/plugin"
+	"github.com/klen/gorm-zero/gormc/config"
+	"github.com/klen/gorm-zero/gormc/plugin"
 
 	"github.com/zeromicro/go-zero/core/logx"
 	"gorm.io/driver/postgres"
