@@ -1,7 +1,7 @@
 package test
 
 import (
-	"github.com/klen/gorm-zero/gormc/config/mysql"
+	"github.com/klen-ygs/gorm-zero/gormc/config/mysql"
 	"github.com/zeromicro/go-zero/core/conf"
 	"testing"
 )

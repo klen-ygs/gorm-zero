@@ -5,8 +5,8 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/klen/gorm-zero/gormc"
-	"github.com/klen/gorm-zero/gormc/config"
+	"github.com/klen-ygs/gorm-zero/gormc"
+	"github.com/klen-ygs/gorm-zero/gormc/config"
 
 	"github.com/zeromicro/go-zero/core/logx"
 	"gorm.io/driver/mysql"
