@@ -28,7 +28,7 @@ type Conf struct {
 }
 
 func (m *Conf) Dsn() string {
-	return m.Username + ":" + m.Password + "@tcp(" + m.Path + ":" + fmt.Sprintf("%d", m.Port) + ")/" + m.Dbname + "?" + m.Config
+	return m.Username + ":" + m.Password + "@tcp(" + m.Path + ":" + fmt.Sprintf("%d", m.Port) + ")/" + m.Dbname + "?" + m.GetConnConfig()
 }
 
 func (m *Conf) GetGormLogMode() logger.LogLevel {
