@@ -1,44 +1,45 @@
-[中文](README-zh.md)
+[English](README.md) 
 
 # gorm-zero
 
-## go zero gorm extension
+## go zero gorm 拓展
 
-### If you use go zero, and you want to use Gorm. You can use this library.
+### 如果你使用gozero框架,又想使用gorm访问数据库,你可以使用这个库
 
-## Feature
+## 特性
 
-- Integrate go-zero
-- generate code by goctl
-- use logx default
-- support opentelemetry
+- 可集成进gozero
+- 可以使用goctl生成代码
+- 默认使用gozero logx日志库
+- 支持链路追踪
 
 
 
-# Usage
+# 使用
 
-### add the dependent
+### 下载依赖
 
 ```shell
 go get github.com/klen-ygs/gorm-zero
 ```
-### generate code
 
-you can generate code by two options.
+### 生成代码
 
-1. download model template to local
+你可以通过以下两种方法生成代码
 
-   - replace  template/model in your project with gorm-zero/model
+1. 下载model模板文件替换本地的模板
 
-   - generate
+   - 下载model文件夹替换你项目中的 template/model 
+
+   - 生成代码
 
      ```shell
      goctl model mysql -src={patterns} -dir={dir} -cache --home ./template
      ```
 
-2. generate by remote template
+2. 使用远程仓库的模板文件
 
-   set remote = https://github.com/klen-ygs/gorm-zero.git
+   设置参数 remote = https://github.com/klen-ygs/gorm-zero.git
 
    ```shell
    goctl model mysql -src={patterns} -dir={dir} -cache --remote https://github.com/klen-ygs/gorm-zero.git
@@ -48,7 +49,8 @@ you can generate code by two options.
 
 ## Mysql
 
-### Config
+### 配置
+
 ```go
 import (
     "github.com/klen-ygs/gorm-zero/gormc/config/mysql"
@@ -58,7 +60,8 @@ type Config struct {
     // ...
 }
 ```
-### Initialization
+
+### 初始化
 
 ```go
 import (
@@ -73,7 +76,7 @@ func NewServiceContext(c config.Config) *ServiceContext {
 }
 ```
 
-or
+或
 
 ```go
 import (
@@ -89,7 +92,8 @@ func NewServiceContext(c config.Config) *ServiceContext {
 
 ## PgSql
 
-### Config
+### 配置
+
 ```go
 import (
 "github.com/klen-ygs/gorm-zero/gormc/config/pg"
@@ -99,7 +103,8 @@ type Config struct {
     // ...
 }
 ```
-### Initialization
+
+### 初始化
 
 ```go
 import (
@@ -114,7 +119,7 @@ func NewServiceContext(c config.Config) *ServiceContext {
 }
 ```
 
-or
+或
 
 ```go
 import (
@@ -128,7 +133,7 @@ func NewServiceContext(c config.Config) *ServiceContext {
 
 # Coding
 
-### Transition
+### 事务
 
 ```go
 // use gormc.Transition, DB is *grom.DB
@@ -168,6 +173,7 @@ if err != nil {
 ```
 
 ### Query With Cache And Default Expire Duration
+
 ```go
     gormzeroUsersIdKey := fmt.Sprintf("%s%v", cacheGormzeroUsersIdPrefix, id)
     var resp Users
