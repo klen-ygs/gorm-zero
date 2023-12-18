@@ -24,27 +24,35 @@ go get github.com/klen-ygs/gorm-zero
 ```
 ### generate code
 
-you can generate code by two options.
+you can generate code by three options.
 
-1. download model template to local
-
-   - replace  template/model in your project with gorm-zero/model
-
-   - generate
-
-     ```shell
-     goctl model mysql -src={patterns} -dir={dir} -cache --home ./template
-     ```
-
-2. generate by remote template
-
-   set remote = https://github.com/klen-ygs/gorm-zero.git
+1. auto replace
 
    ```shell
-   goctl model mysql -src={patterns} -dir={dir} -cache --remote https://github.com/klen-ygs/gorm-zero.git
+   goctl template init --home ./template
+   cd template/model
+   go run github.com/klen-ygs/gorm-zero/model@latest
    ```
 
-   
+2. download model template to local
+
+- replace  template/model in your project with gorm-zero/model
+
+- generate
+
+  ```shell
+  goctl model mysql -src={patterns} -dir={dir} -cache --home ./template
+  ```
+
+3. generate by remote template
+
+set remote = https://github.com/klen-ygs/gorm-zero.git
+
+```shell
+goctl model mysql -src={patterns} -dir={dir} -cache --remote https://github.com/klen-ygs/gorm-zero.git
+```
+
+
 
 ## Mysql
 

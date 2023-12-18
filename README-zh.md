@@ -25,27 +25,35 @@ go get github.com/klen-ygs/gorm-zero
 
 ### 生成代码
 
-你可以通过以下两种方法生成代码
+你可以通过以下三种方法生成代码
 
-1. 下载model模板文件替换本地的模板
+1. 自动替换模板
 
-   - 下载model文件夹替换你项目中的 template/model 
+```shell
+goctl template init --home ./template
+cd template/model
+go run github.com/klen-ygs/gorm-zero/model@latest
+```
 
-   - 生成代码
+2. 下载model模板文件替换本地的模板
 
-     ```shell
-     goctl model mysql -src={patterns} -dir={dir} -cache --home ./template
-     ```
+- 下载model文件夹替换你项目中的 template/model 
 
-2. 使用远程仓库的模板文件
+- 生成代码
 
-   设置参数 remote = https://github.com/klen-ygs/gorm-zero.git
+  ```shell
+  goctl model mysql -src={patterns} -dir={dir} -cache --home ./template
+  ```
 
-   ```shell
-   goctl model mysql -src={patterns} -dir={dir} -cache --remote https://github.com/klen-ygs/gorm-zero.git
-   ```
+3. 使用远程仓库的模板文件
 
-   
+设置参数 remote = https://github.com/klen-ygs/gorm-zero.git
+
+```shell
+goctl model mysql -src={patterns} -dir={dir} -cache --remote https://github.com/klen-ygs/gorm-zero.git
+```
+
+
 
 ## Mysql
 
