@@ -17,7 +17,7 @@ import (
 type Conf struct {
 	Path          string // 服务器地址
 	Port          int    `json:",default=3306"` // 端口
-	Config        string `json:",default=\"\""` // default: charset=utf8mb4&parseTime=True&loc=Local 高级配置
+	Config        string `json:",optional"`     // default: charset=utf8mb4&parseTime=True&loc=Local 高级配置
 	Dbname        string // 数据库名
 	Username      string // 数据库用户名
 	Password      string // 数据库密码
