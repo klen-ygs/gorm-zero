@@ -17,6 +17,6 @@ type (
 var Q{{.upperStartCamelObject}} {{.upperStartCamelObject}}
 
 func init() {
-    gormc.InitField(&Q{{.upperStartCamelObject}})
+    InitField(&Q{{.upperStartCamelObject}})
 }
 

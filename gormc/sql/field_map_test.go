@@ -1,4 +1,4 @@
-package gormc
+package sql
 
 import (
 	"github.com/stretchr/testify/assert"

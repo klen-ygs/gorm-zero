@@ -1,4 +1,4 @@
-package gormc
+package sql
 
 import (
 	"errors"
@@ -27,7 +27,11 @@ func getDbField(tag string) (string, error) {
 	return dbname, nil
 }
 
-func InitField(model any) {
+type Tabler interface {
+	TableName() string
+}
+
+func InitField(model Tabler) {
 	typePointerInfo := reflect.TypeOf(model)
 	if typePointerInfo.Kind() != reflect.Pointer {
 		logx.Must(errors.New("model must be pointer"))
@@ -37,15 +41,17 @@ func InitField(model any) {
 	typeInfo := typePointerInfo.Elem()
 	fieldNum := typeInfo.NumField()
 
+	tableName := model.TableName()
+
 	for i := 0; i < fieldNum; i++ {
 		tag := typeInfo.Field(i).Tag.Get("gorm")
 		addr := valueInfo.Field(i).UnsafeAddr()
-		dbName, err := getDbField(tag)
+		fieldName, err := getDbField(tag)
 		if err != nil {
 			logx.Must(err)
 		}
 
-		fieldMap[addr] = dbName
+		fieldMap[addr] = tableName + "." + fieldName
 	}
 }
 

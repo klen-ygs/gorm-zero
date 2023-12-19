@@ -8,22 +8,8 @@ func (m *default{{.upperStartCamelObject}}Model) FindOneBy{{.upperField}}(ctx co
 		}
 		return resp.{{.upperStartCamelPrimaryKey}}, nil
 	}, m.queryPrimary)
-	switch err {
-	case nil:
-		return &resp, nil
-	case gormc.ErrNotFound:
-		return nil, ErrNotFound
-	default:
-		return nil, err
-	}
+	return &resp, err
 }{{else}}var resp {{.upperStartCamelObject}}
 	err := m.conn.WithContext(ctx).Model(&{{.upperStartCamelObject}}{}).Where("{{.originalField}}", {{.lowerStartCamelField}}).Take(&resp).Error
-	switch err {
-	case nil:
-		return &resp, nil
-	case gormc.ErrNotFound:
-		return nil, ErrNotFound
-	default:
-		return nil, err
-	}
+	return &resp, err
 }{{end}}
