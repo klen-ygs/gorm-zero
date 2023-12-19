@@ -13,3 +13,10 @@ type (
 		{{.fields}}
 	}
 )
+
+var Q{{.upperStartCamelObject}} {{.upperStartCamelObject}}
+
+func init() {
+    gormc.InitField(&Q{{.upperStartCamelObject}})
+}
+
