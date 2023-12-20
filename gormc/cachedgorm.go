@@ -35,11 +35,11 @@ type (
 	// ExecCtxFn defines the sql exec method.
 	ExecCtxFn func(conn *gorm.DB) error
 	// IndexQueryCtxFn defines the query method that based on unique indexes.
-	IndexQueryCtxFn func(conn *gorm.DB, v interface{}) (interface{}, error)
+	IndexQueryCtxFn func(conn *gorm.DB, v any) (any, error)
 	// PrimaryQueryCtxFn defines the query method that based on primary keys.
-	PrimaryQueryCtxFn func(conn *gorm.DB, v, primary interface{}) error
+	PrimaryQueryCtxFn func(conn *gorm.DB, v, primary any) error
 	// QueryCtxFn defines the query method.
-	QueryCtxFn func(conn *gorm.DB, v interface{}) error
+	QueryCtxFn func(conn *gorm.DB, v any) error
 
 	CachedConn struct {
 		db                 *gorm.DB
@@ -80,12 +80,12 @@ func (cc CachedConn) DelCacheCtx(ctx context.Context, keys ...string) error {
 }
 
 // GetCache unmarshals cache with given key into v.
-func (cc CachedConn) GetCache(key string, v interface{}) error {
+func (cc CachedConn) GetCache(key string, v any) error {
 	return cc.cache.GetCtx(context.Background(), key, v)
 }
 
 // GetCacheCtx unmarshals cache with given key into v.
-func (cc CachedConn) GetCacheCtx(ctx context.Context, key string, v interface{}) error {
+func (cc CachedConn) GetCacheCtx(ctx context.Context, key string, v any) error {
 	return cc.cache.GetCtx(ctx, key, v)
 }
 
@@ -117,18 +117,18 @@ func (cc CachedConn) ExecNoCacheCtx(ctx context.Context, execCtx ExecCtxFn) (err
 }
 
 // QueryRowIndex unmarshals into v with given key.
-func (cc CachedConn) QueryRowIndex(v interface{}, key string, keyer func(primary interface{}) string,
+func (cc CachedConn) QueryRowIndex(v any, key string, keyer func(primary any) string,
 	indexQuery IndexQueryCtxFn, primaryQuery PrimaryQueryCtxFn) error {
 	return cc.QueryRowIndexCtx(context.Background(), v, key, keyer, indexQuery, primaryQuery)
 }
 
 // QueryRowIndexCtx unmarshals into v with given key.
-func (cc CachedConn) QueryRowIndexCtx(ctx context.Context, v interface{}, key string, keyer func(primary interface{}) string, indexQuery IndexQueryCtxFn, primaryQuery PrimaryQueryCtxFn) (err error) {
+func (cc CachedConn) QueryRowIndexCtx(ctx context.Context, v any, key string, keyer func(primary any) string, indexQuery IndexQueryCtxFn, primaryQuery PrimaryQueryCtxFn) (err error) {
 
-	var primaryKey interface{}
+	var primaryKey any
 	var found bool
 
-	if err = cc.cache.TakeWithExpireCtx(ctx, &primaryKey, key, func(val interface{}, expire time.Duration) error {
+	if err = cc.cache.TakeWithExpireCtx(ctx, &primaryKey, key, func(val any, expire time.Duration) error {
 		primaryKey, err = indexQuery(cc.db.WithContext(ctx), v)
 		if err != nil {
 			return err
@@ -141,23 +141,23 @@ func (cc CachedConn) QueryRowIndexCtx(ctx context.Context, v interface{}, key st
 	if found {
 		return nil
 	}
-	return cc.cache.TakeCtx(ctx, v, keyer(primaryKey), func(v interface{}) error {
+	return cc.cache.TakeCtx(ctx, v, keyer(primaryKey), func(v any) error {
 		return primaryQuery(cc.db.WithContext(ctx), v, primaryKey)
 	})
 }
 
-func (cc CachedConn) QueryCtx(ctx context.Context, v interface{}, key string, query QueryCtxFn) (err error) {
-	return cc.cache.TakeCtx(ctx, v, key, func(v interface{}) error {
+func (cc CachedConn) QueryCtx(ctx context.Context, v any, key string, query QueryCtxFn) (err error) {
+	return cc.cache.TakeCtx(ctx, v, key, func(v any) error {
 		return query(cc.db.WithContext(ctx), v)
 	})
 }
 
-func (cc CachedConn) QueryNoCacheCtx(ctx context.Context, v interface{}, query QueryCtxFn) (err error) {
+func (cc CachedConn) QueryNoCacheCtx(ctx context.Context, v any, query QueryCtxFn) (err error) {
 	return query(cc.db.WithContext(ctx), v)
 }
 
 // QueryWithExpireCtx unmarshals into v with given key, set expire duration and query func.
-func (cc CachedConn) QueryWithExpireCtx(ctx context.Context, v interface{}, key string, expire time.Duration, query QueryCtxFn) (err error) {
+func (cc CachedConn) QueryWithExpireCtx(ctx context.Context, v any, key string, expire time.Duration, query QueryCtxFn) (err error) {
 	err = query(cc.db.WithContext(ctx), v)
 	if err != nil {
 		return err
@@ -172,17 +172,17 @@ func (cc CachedConn) aroundDuration(duration time.Duration) time.Duration {
 }
 
 // SetCache sets v into cache with given key.
-func (cc CachedConn) SetCache(key string, v interface{}) error {
+func (cc CachedConn) SetCache(key string, v any) error {
 	return cc.cache.SetCtx(context.Background(), key, v)
 }
 
 // SetCacheCtx sets v into cache with given key.
-func (cc CachedConn) SetCacheCtx(ctx context.Context, key string, val interface{}) error {
+func (cc CachedConn) SetCacheCtx(ctx context.Context, key string, val any) error {
 	return cc.cache.SetCtx(ctx, key, val)
 }
 
 // SetCacheWithExpireCtx sets v into cache with given key.
-func (cc CachedConn) SetCacheWithExpireCtx(ctx context.Context, key string, val interface{}, expire time.Duration) error {
+func (cc CachedConn) SetCacheWithExpireCtx(ctx context.Context, key string, val any, expire time.Duration) error {
 	return cc.cache.SetWithExpireCtx(ctx, key, val, expire)
 }
 
