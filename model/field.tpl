@@ -1,1 +1,8 @@
-{{.name}} {{if eq .name "DeletedAt"}}gorm.DeletedAt{{else}}{{.type}}{{end}} {{.tag}} {{if .hasComment}}// {{.comment}}{{end}}
+{{ $space := " " -}}
+{{ .name }}{{ $space -}}
+{{if eq .name "DeletedAt" -}} {{- /* gorm 逻辑删除 */ -}}
+gorm.DeletedAt{{ $space }}
+{{- else -}}
+{{ .type }}{{ $space }}
+{{- end -}}
+{{.tag}} {{if .hasComment}}// {{.comment}}{{end}}
