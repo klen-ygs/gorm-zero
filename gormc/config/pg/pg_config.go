@@ -145,7 +145,7 @@ func MustConnectWithConfig(m Conf, cfg *gorm.Config) *gorm.DB {
 }
 
 func initPlugin(db *gorm.DB) error {
-	if err := db.Use(gormc.OtelPlugin{}); err == nil {
+	if err := db.Use(gormc.OtelPlugin{}); err != nil {
 		return err
 	}
 
