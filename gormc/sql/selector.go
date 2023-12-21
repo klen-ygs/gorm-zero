@@ -2,31 +2,31 @@ package sql
 
 import "fmt"
 
-func Eq[FieldType any, Selector any](field *FieldType, query Selector) (string, Selector) {
+func Eq[FieldType any](field *FieldType, query FieldType) (string, FieldType) {
 	return Field(field), query
 }
 
-func Ne[FieldType any, Selector any](field *FieldType, query Selector) (string, Selector) {
+func Ne[FieldType any](field *FieldType, query FieldType) (string, FieldType) {
 	return Field(field), query
 }
 
-func Gt[FieldType any, Selector any](field *FieldType, query Selector) (string, Selector) {
+func Gt[FieldType any](field *FieldType, query FieldType) (string, FieldType) {
 	return Field(field) + " > ?", query
 }
 
-func Ge[FieldType any, Selector any](field *FieldType, query Selector) (string, Selector) {
+func Ge[FieldType any](field *FieldType, query FieldType) (string, FieldType) {
 	return Field(field) + " >= ?", query
 }
 
-func Lt[FieldType any, Selector any](field *FieldType, query Selector) (string, Selector) {
+func Lt[FieldType any](field *FieldType, query FieldType) (string, FieldType) {
 	return Field(field) + " < ?", query
 }
 
-func Le[FieldType any, Selector any](field *FieldType, query Selector) (string, Selector) {
+func Le[FieldType any](field *FieldType, query FieldType) (string, FieldType) {
 	return Field(field) + " <= ?", query
 }
 
-func Between[FieldType any, Selector any](field *FieldType, start, end Selector) (string, Selector, Selector) {
+func Between[FieldType any](field *FieldType, start, end FieldType) (string, FieldType, FieldType) {
 	return Field(field) + " BETWEEN ? AND ?", start, end
 }
 
@@ -46,18 +46,18 @@ func IsNil[FieldType any](field *FieldType) string {
 	return Field(field) + " IS NULL"
 }
 
-func In[FieldType any, Selector any](field *FieldType, query []Selector) (string, []Selector) {
+func In[FieldType any](field *FieldType, query []FieldType) (string, []FieldType) {
 	return Field(field), query
 }
 
-func On[LeftField any, RightField any](tabler Tabler, left *LeftField, right *RightField) string {
+func On[FieldType any](tabler Tabler, left *FieldType, right *FieldType) string {
 	return fmt.Sprintf("JOIN %s ON %s = %s", tabler.TableName(), Field(left), Field(right))
 }
 
-func LeftOn[LeftField any, RightField any](tabler Tabler, left *LeftField, right *RightField) string {
+func LeftOn[FieldType any](tabler Tabler, left *FieldType, right *FieldType) string {
 	return fmt.Sprintf("Left JOIN %s ON %s = %s", tabler.TableName(), Field(left), Field(right))
 }
 
-func RightOn[LeftField any, RightField any](tabler Tabler, left *LeftField, right *RightField) string {
+func RightOn[FieldType any](tabler Tabler, left *FieldType, right *FieldType) string {
 	return fmt.Sprintf("Right JOIN %s ON %s = %s", tabler.TableName(), Field(left), Field(right))
 }
