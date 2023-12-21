@@ -7,7 +7,7 @@ import (
 )
 
 const metricsTimeKey = "metricsTime"
-const metricsNamespace = "gorm-metrics"
+const metricsNamespace = "db"
 
 type MetricsPlugin struct {
 	queryTimeHistogram metric.HistogramVec
@@ -16,7 +16,7 @@ type MetricsPlugin struct {
 }
 
 func (o *MetricsPlugin) Name() string {
-	return "gorm-metrics"
+	return "gorm_metrics"
 }
 
 func (o *MetricsPlugin) Initialize(db *gorm.DB) (err error) {
@@ -46,7 +46,7 @@ func (o *MetricsPlugin) Initialize(db *gorm.DB) (err error) {
 		return err
 	}
 
-	if err = db.Callback().Query().After("*").Register("query_metrics_before", o.After); err != nil {
+	if err = db.Callback().Query().After("*").Register("query_metrics_after", o.After); err != nil {
 		return err
 	}
 
@@ -54,7 +54,7 @@ func (o *MetricsPlugin) Initialize(db *gorm.DB) (err error) {
 		return err
 	}
 
-	if err = db.Callback().Create().After("*").Register("create_metrics_before", o.After); err != nil {
+	if err = db.Callback().Create().After("*").Register("create_metrics_after", o.After); err != nil {
 		return err
 	}
 
@@ -62,7 +62,7 @@ func (o *MetricsPlugin) Initialize(db *gorm.DB) (err error) {
 		return err
 	}
 
-	if err = db.Callback().Update().After("*").Register("update_metrics_before", o.After); err != nil {
+	if err = db.Callback().Update().After("*").Register("update_metrics_after", o.After); err != nil {
 		return err
 	}
 
@@ -70,7 +70,7 @@ func (o *MetricsPlugin) Initialize(db *gorm.DB) (err error) {
 		return err
 	}
 
-	if err = db.Callback().Delete().After("*").Register("delete_metrics_before", o.After); err != nil {
+	if err = db.Callback().Delete().After("*").Register("delete_metrics_after", o.After); err != nil {
 		return err
 	}
 
