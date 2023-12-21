@@ -57,8 +57,8 @@ func Connect(m Conf) (*gorm.DB, error) {
 	if err != nil {
 		return nil, err
 	}
-	err = db.Use(gormc.OtelPlugin{})
-	if err != nil {
+
+	if err = initPlugin(db); err != nil {
 		return nil, err
 	}
 
@@ -84,6 +84,11 @@ func MustConnect(m Conf) *gorm.DB {
 	if err != nil {
 		logx.Must(err)
 	}
+
+	if err = initPlugin(db); err != nil {
+		logx.Must(err)
+	}
+
 	sqldb, _ := db.DB()
 	sqldb.SetMaxIdleConns(m.MaxIdleConns)
 	sqldb.SetMaxOpenConns(m.MaxOpenConns)
@@ -104,8 +109,7 @@ func ConnectWithConfig(m Conf, cfg *gorm.Config) (*gorm.DB, error) {
 		return nil, err
 	}
 
-	err = db.Use(gormc.OtelPlugin{})
-	if err != nil {
+	if err = initPlugin(db); err != nil {
 		return nil, err
 	}
 
@@ -128,9 +132,26 @@ func MustConnectWithConfig(m Conf, cfg *gorm.Config) *gorm.DB {
 	if err != nil {
 		logx.Must(err)
 	}
+
+	if err = initPlugin(db); err != nil {
+		logx.Must(err)
+	}
+
 	sqldb, _ := db.DB()
 	sqldb.SetMaxIdleConns(m.MaxIdleConns)
 	sqldb.SetMaxOpenConns(m.MaxOpenConns)
 
 	return db
+}
+
+func initPlugin(db *gorm.DB) error {
+	if err := db.Use(gormc.OtelPlugin{}); err == nil {
+		return err
+	}
+
+	if err := db.Use(&gormc.MetricsPlugin{}); err != nil {
+		return err
+	}
+
+	return nil
 }
