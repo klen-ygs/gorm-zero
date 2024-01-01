@@ -12,6 +12,8 @@
 - generate code by goctl
 - use logx default
 - support opentelemetry
+- support  metrics
+- more easily to use gorm
 
 
 
@@ -134,7 +136,99 @@ func NewServiceContext(c config.Config) *ServiceContext {
 }
 ```
 
-# Coding
+# Example
+
+### create sql file named studentManager.sql 
+
+```sql
+CREATE TABLE `student`(
+    `id` INT AUTO_INCREMENT,
+    `name` varchar(10) NOT NULL DEFAULT '',
+    `age` INT NOT NULL DEFAULT 0,
+    PRIMARY KEY (`id`)
+)charset=utf8mb4;
+
+CREATE TABLE `course`(
+    `id` INT AUTO_INCREMENT,
+    `name` varchar(20) NOT NULL DEFAULT '',
+    `credit` INT NOT NULL DEFAULT 0,
+    PRIMARY KEY (`id`)
+)charset=utf8mb4;
+
+CREATE TABLE `sc` (
+    `id` INT AUTO_INCREMENT,
+    `student_id` INT NOT NULL,
+    `course_id` INT NOT NULL,
+    `grade` INT NOT NULL,
+    PRIMARY KEY (`id`)
+);
+```
+
+### generate code
+
+```shell
+goctl template init --home ./template
+cd template/model
+go run github.com/klen-ygs/gorm-zero/model@latest
+cd ../.. 
+goctl model mysql ddl -dir ./internal/model -src studentManager.sql -style go_zero -home template
+go mod tidy
+```
+
+### write code in student_model.go
+
+```go
+
+// customStudentLogicModel add your method here
+customStudentLogicModel interface {
+    WithSession(tx *gorm.DB) StudentModel
+
+    // FindStudentByName my db method
+    FindStudentByName(ctx context.Context, name string) ([]*Student, error)
+    // FindStudentAgeBetween my db method
+	FindStudentAgeBetween(ctx context.Context, start, ent int) ([]*Student, error)
+    // FindStudentGradeGreater my db method
+	FindStudentGradeGreater(ctx context.Context, greater int) (resp []*Student,err error)
+}
+
+// FindStudentByName select * from student where name = #{name}
+func (c customStudentModel) FindStudentByName(ctx context.Context, name string) (resp []*Student, err error) {
+	err = c.conn.
+		WithContext(ctx).
+		Where(Eq(&QStudent.Name, name)).
+		Find(&resp).
+		Error
+
+	return
+}
+	
+// FindStudentAgeBetween select * from student where age between #{start} and #{end}
+func (c customStudentModel) FindStudentAgeBetween(ctx context.Context, start, ent int) (resp []*Student,err error) {
+	err = c.conn.
+		WithContext(ctx).
+		Where(Between(&QStudent.Age, start, ent)).
+		Find(&resp).
+		Error
+	
+	return 
+}
+
+// FindStudentGradeGreater
+// select student.* from student as stu
+// join sc on stu.id = sc.student_id
+// where sc.grade > #{greater}
+func (c customStudentModel) FindStudentGradeGreater(ctx context.Context, greater int) (resp []*Student, err error) {
+	err = c.conn.
+		WithContext(ctx).
+		Joins(On(&QSc, &QSc.StudentId, &QStudent.Id)).
+		Where(Gt(&QSc.Grade, greater)).
+		Find(&resp).
+		Error
+
+	return
+}
+
+```
 
 ### Transition
 
@@ -153,42 +247,5 @@ err = gormc.Transition(l.ctx, l.svcCtx.DB, func(tx *gorm.DB) (err error) {
 if err != nil {
     return nil, err
 }
-```
-
-    
-
-### Query With Cache And Custom Expire Duration
-
-```go
-    gormzeroUsersIdKey := fmt.Sprintf("%s%v", cacheGormzeroUsersIdExpirePrefix, id)
-    var resp Users
-    err := m.QueryWithExpireCtx(ctx, &resp, gormzeroUsersIdKey, expire, func(conn *gorm.DB, v interface{}) error {
-        return conn.Model(&Users{}).Where("`id` = ?", id).First(&resp).Error
-    })
-    switch err {
-        case nil:
-            return &resp, nil
-        case gormc.ErrNotFound:
-            return nil, ErrNotFound
-        default:
-            return nil, err
-    }
-```
-
-### Query With Cache And Default Expire Duration
-```go
-    gormzeroUsersIdKey := fmt.Sprintf("%s%v", cacheGormzeroUsersIdPrefix, id)
-    var resp Users
-    err := m.QueryCtx(ctx, &resp, gormzeroUsersIdKey, func(conn *gorm.DB, v interface{}) error {
-        return conn.Model(&Users{}).Where("`id` = ?", id).First(&resp).Error
-    })
-    switch err {
-        case nil:
-            return &resp, nil
-        case gormc.ErrNotFound:
-            return nil, ErrNotFound
-        default:
-            return nil, err
-    }
 ```
 
