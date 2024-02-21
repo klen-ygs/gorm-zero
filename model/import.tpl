@@ -3,6 +3,7 @@ import (
 	"fmt"
 	"time"
 	"database/sql"
+	"strings"
 
 	. "github.com/klen-ygs/gorm-zero/gormc/sql"
 	"github.com/klen-ygs/gorm-zero/gormc"
