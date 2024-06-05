@@ -9,9 +9,9 @@ func (m *default{{.upperStartCamelObject}}Model) Delete(ctx context.Context, {{.
 	}
 	 err = m.ExecCtx(ctx, func(conn *gorm.DB) error {
 		db := conn
-        return db.Delete(&{{.upperStartCamelObject}}{}, {{.lowerStartCamelPrimaryKey}}).Error
+        return db.Where("{{.originalPrimaryKey}} = @id", sql.Named("id", {{.lowerStartCamelPrimaryKey}})).Delete(&{{.upperStartCamelObject}}{}).Error
 	}, m.getCacheKeys(data)...){{else}} db := m.conn
-        err:= db.WithContext(ctx).Delete(&{{.upperStartCamelObject}}{}, {{.lowerStartCamelPrimaryKey}}).Error
+        err:= db.WithContext(ctx).Where("{{.originalPrimaryKey}} = @id", sql.Named("id", {{.lowerStartCamelPrimaryKey}})).Delete(&{{.upperStartCamelObject}}{}).Error
 	{{end}}
 	return err
 }
